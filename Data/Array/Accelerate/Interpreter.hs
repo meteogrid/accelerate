@@ -56,6 +56,7 @@ import Control.Exception
 import Control.Monad
 import Data.Bits
 import Data.Char                                                    ( chr, ord )
+import Data.Coerce
 import System.IO.Unsafe                                             ( unsafePerformIO )
 import Text.Printf                                                  ( printf )
 import Unsafe.Coerce                                                ( unsafeCoerce )
@@ -1094,6 +1095,7 @@ evalPrim PrimBoolToInt               = evalBoolToInt
 evalPrim (PrimFromIntegral ta tb)    = evalFromIntegral ta tb
 evalPrim (PrimToFloating ta tb)      = evalToFloating ta tb
 evalPrim PrimCoerce{}                = unsafeCoerce
+evalPrim PrimSafeCoerce{}            = coerce
 
 
 -- Tuple construction and projection

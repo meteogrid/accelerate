@@ -28,7 +28,9 @@ module Data.Array.Accelerate.Trafo.Algebra (
 import Prelude                                          hiding ( exp )
 import Data.Bits
 import Data.Char
+import Data.Coerce
 import Data.Monoid
+import Data.Proxy
 import GHC.Float                                        ( float2Double, double2Float )
 import Text.PrettyPrint.ANSI.Leijen
 import Unsafe.Coerce
@@ -165,6 +167,7 @@ evalPrimApp env f x
       PrimFromIntegral ta tb    -> evalFromIntegral ta tb x env
       PrimToFloating ta tb      -> evalToFloating ta tb x env
       PrimCoerce ta tb          -> evalCoerce ta tb x env
+      PrimSafeCoerce ta tb      -> evalSafeCoerce ta tb x env
 
 
 -- Discriminate binary functions that commute, and if so return the operands in
@@ -718,6 +721,8 @@ evalToFloating (FloatingNumType ta) tb x env
 evalCoerce :: Elt b => ScalarType a -> ScalarType b -> a :-> b
 evalCoerce _ _ = eval1 unsafeCoerce
 
+evalSafeCoerce :: (Elt b, Coercible a b) => Proxy a -> ScalarType b -> a :-> b
+evalSafeCoerce _ _ = eval1 coerce
 
 -- Scalar primitives
 -- -----------------

@@ -698,4 +698,5 @@ summariseOpenExp = modify terms (+1) . goE
             PrimFromIntegral     i n -> travIntegralType i +++ travNumType n
             PrimToFloating       n f -> travNumType n +++ travFloatingType f
             PrimCoerce           a b -> travScalarType a +++ travScalarType b
+            PrimSafeCoerce       _ b -> travScalarType b
 

@@ -402,6 +402,7 @@ hashPrimFun (PrimMin a)                = $(hashQ "PrimMin")                `hash
 hashPrimFun (PrimFromIntegral a b)     = $(hashQ "PrimFromIntegral")       `hashWithSalt` hashIntegralType a `hashWithSalt` hashNumType b
 hashPrimFun (PrimToFloating a b)       = $(hashQ "PrimToFloating")         `hashWithSalt` hashNumType a      `hashWithSalt` hashFloatingType b
 hashPrimFun (PrimCoerce a b)           = $(hashQ "PrimCoerce")             `hashWithSalt` hashScalarType a   `hashWithSalt` hashScalarType b
+hashPrimFun (PrimSafeCoerce a b)       = $(hashQ "PrimSafeCoerce")         `hashWithSalt` hash a             `hashWithSalt` hashScalarType b
 hashPrimFun PrimLAnd                   = $(hashQ "PrimLAnd")
 hashPrimFun PrimLOr                    = $(hashQ "PrimLOr")
 hashPrimFun PrimLNot                   = $(hashQ "PrimLNot")

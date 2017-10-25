@@ -501,6 +501,7 @@ prettyPrim PrimBoolToInt            = (False, text "boolToInt")
 prettyPrim PrimFromIntegral{}       = (False, text "fromIntegral")
 prettyPrim PrimToFloating{}         = (False, text "toFloating")
 prettyPrim (PrimCoerce _ t)         = (False, text "reinterpret_cast" <> char '<' <> text (show t) <> char '>')
+prettyPrim (PrimSafeCoerce _ t)     = (False, text "coerce" <> char '<' <> text (show t) <> char '>')
 
 {-
 -- Pretty print type

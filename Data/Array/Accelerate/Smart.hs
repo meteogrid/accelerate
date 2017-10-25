@@ -58,7 +58,7 @@ module Data.Array.Accelerate.Smart (
   mkLAnd, mkLOr, mkLNot, mkIsNaN, mkIsInfinite,
 
   -- * Smart constructors for type coercion functions
-  mkOrd, mkChr, mkBoolToInt, mkFromIntegral, mkToFloating, mkBitcast, mkUnsafeCoerce,
+  mkOrd, mkChr, mkBoolToInt, mkFromIntegral, mkToFloating, mkBitcast, mkUnsafeCoerce, mkCoerce,
 
   -- * Auxiliary functions
   ($$), ($$$), ($$$$), ($$$$$),
@@ -70,6 +70,7 @@ module Data.Array.Accelerate.Smart (
 
 -- standard library
 import Prelude                                  hiding ( exp )
+import Data.Coerce
 import Data.List
 import Data.Typeable
 
@@ -2014,6 +2015,8 @@ mkBitcast = mkUnsafeCoerce
 mkUnsafeCoerce :: (Elt a, Elt b, IsScalar a, IsScalar b) => Exp a -> Exp b
 mkUnsafeCoerce x = Exp $ PrimCoerce scalarType scalarType `PrimApp` x
 
+mkCoerce :: (Elt a, Elt b, Typeable a, Coercible a b, IsScalar b) => Exp a -> Exp b
+mkCoerce x = Exp $ PrimSafeCoerce Proxy scalarType `PrimApp` x
 
 -- Auxiliary functions
 -- --------------------

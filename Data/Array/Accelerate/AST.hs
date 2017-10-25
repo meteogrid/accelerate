@@ -118,7 +118,9 @@ module Data.Array.Accelerate.AST (
 
 --standard library
 import Control.DeepSeq
+import Data.Coerce
 import Data.List
+import Data.Proxy
 import Data.Typeable
 import Foreign.ForeignPtr
 import Foreign.Marshal
@@ -1061,6 +1063,9 @@ data PrimFun sig where
   -- (the two types must have the same bit size)
   PrimCoerce :: ScalarType a -> ScalarType b -> PrimFun (a -> b)
 
+  -- reinterpret a newtype into its underlying type
+  PrimSafeCoerce :: (Typeable a, Coercible a b) => Proxy a -> ScalarType b -> PrimFun (a -> b)
+
   -- FIXME: Conversions between various integer types: should we have overloaded
   -- functions like 'toInt'? (or 'fromEnum' for enums?)
 
@@ -1372,6 +1377,7 @@ rnfPrimFun PrimBoolToInt              = ()
 rnfPrimFun (PrimFromIntegral i n)     = rnfIntegralType i `seq` rnfNumType n
 rnfPrimFun (PrimToFloating n f)       = rnfNumType n `seq` rnfFloatingType f
 rnfPrimFun (PrimCoerce a b)           = rnfScalarType a `seq` rnfScalarType b
+rnfPrimFun (PrimSafeCoerce a b)       = rnf a `seq` rnfScalarType b
 
 rnfSliceIndex :: SliceIndex ix slice co sh -> ()
 rnfSliceIndex SliceNil        = ()
@@ -1707,6 +1713,7 @@ liftPrimFun PrimBoolToInt              = [|| PrimBoolToInt ||]
 liftPrimFun (PrimFromIntegral ta tb)   = [|| PrimFromIntegral $$(liftIntegralType ta) $$(liftNumType tb) ||]
 liftPrimFun (PrimToFloating ta tb)     = [|| PrimToFloating $$(liftNumType ta) $$(liftFloatingType tb) ||]
 liftPrimFun (PrimCoerce ta tb)         = [|| PrimCoerce $$(liftScalarType ta) $$(liftScalarType tb) ||]
+liftPrimFun (PrimSafeCoerce _ tb)      = [|| PrimSafeCoerce Proxy $$(liftScalarType tb) ||]
 
 
 liftConst :: TupleType t -> t -> Q (TExp t)
